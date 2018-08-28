@@ -16,13 +16,13 @@
   $.noConflict();
 
   function displayCards() {
-    let games = document.querySelectorAll('[href*="steam-trading-cards"]');
-
-    for (let game of games) {
-      let parent = game.closest(".p-3").previousSibling;
-      parent.style.borderRight = "3px solid gold";
-    }
+    jQuery('[href*="steam-trading-cards"]').each(() => {
+      jQuery(this)
+        .parents(".p-3")
+        .prev()
+        .css('borderRight', '3px solid gold');
+    });
   }
 
-  waitForKeyElements('[data-product-id]', displayCards);
+  waitForKeyElements('[data-product-id]', displayCards, true);
 })();
