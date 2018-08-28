@@ -1,28 +1,37 @@
 // ==UserScript==
 // @name         Fanatical Steam Cards
 // @namespace    https://github.com/MrMarble/FanaticalUtilities
-// @version      0.3
+// @version      0.4
 // @description  Show if a game contains steam trading cards
 // @author       MrMarble
 // @match        https://www.fanatical.com/*/bundle/*
 // @updateURL    https://raw.githubusercontent.com/MrMarble/FanaticalUtilities/master/FanaticalUtilities.user.js
 // @downloadURL  https://raw.githubusercontent.com/MrMarble/FanaticalUtilities/master/FanaticalUtilities.user.js
+// @grant        GM_addStyle
 // @require      https://code.jquery.com/jquery-3.3.1.min.js
 // @require      https://raw.githubusercontent.com/MrMarble/FanaticalUtilities/master/waitForKeyElements.js
-// @resource     https://steamstore-a.akamaihd.net/public/images/v6/ico/ico_cards.png
 // ==/UserScript==
 (function() {
   'use strict';
   $.noConflict();
+  GM_addStyle('div.has-cards {border-right: 3px solid gold}');
+  GM_addStyle('span > img.card-icon {width: 26px !important;height: 16px;margin-bottom: 4px;}');
 
   function displayCards() {
-    jQuery('[href*="steam-trading-cards"]').each(() => {
-      jQuery(this)
-        .parents(".p-3")
-        .prev()
-        .css('borderRight', '3px solid gold');
-    });
+    setTimeout(function() {
+      jQuery('[href*="steam-trading-cards"]').each((index, element) => {
+        jQuery(element)
+          .parents(".p-3")
+          .prev()
+          .addClass('has-cards')
+          .find('span > svg')
+          .parent().parent()
+          .append('<span><img src="https://steamstore-a.akamaihd.net/public/images/v6/ico/ico_cards.png" class="card-icon"></span>');
+      });
+    }, 500);
   }
 
-  waitForKeyElements('[data-product-id]', displayCards, true);
+  jQuery(window).on('load', function() {
+    waitForKeyElements('[data-product-id]', displayCards, true);
+  });
 })();
