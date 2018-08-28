@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Fanatical Steam Cards
 // @namespace    https://github.com/MrMarble/FanaticalUtilities
-// @version      0.4
+// @version      0.5
 // @description  Show if a game contains steam trading cards
 // @author       MrMarble
 // @match        https://www.fanatical.com/*/bundle/*
@@ -20,18 +20,21 @@
   function displayCards() {
     setTimeout(function() {
       jQuery('[href*="steam-trading-cards"]').each((index, element) => {
-        jQuery(element)
-          .parents(".p-3")
-          .prev()
-          .addClass('has-cards')
-          .find('span > svg')
-          .parent().parent()
-          .append('<span><img src="https://steamstore-a.akamaihd.net/public/images/v6/ico/ico_cards.png" class="card-icon"></span>');
+        if (!jQuery(element).data('has-cards')) {
+          jQuery(element).data('has-cards', true);
+          jQuery(element)
+            .parents(".p-3")
+            .prev()
+            .addClass('has-cards')
+            .find('span > svg')
+            .parent().parent()
+            .append('<span><img src="https://steamstore-a.akamaihd.net/public/images/v6/ico/ico_cards.png" class="card-icon"></span>');
+        }
       });
-    }, 500);
+    }, 250);
   }
 
   jQuery(window).on('load', function() {
-    waitForKeyElements('[data-product-id]', displayCards, true);
+    waitForKeyElements('div.bundle-accordion', displayCards);
   });
 })();
