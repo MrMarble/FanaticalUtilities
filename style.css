@@ -1,0 +1,28 @@
+div.has-cards {
+  border-right: 3px solid gold
+}
+
+span>img.card-icon {
+  width: 26px !important;
+  height: 16px;
+  margin-bottom: 4px;
+}
+
+#utilities-settings {
+  position: fixed;
+  z-index: 100;
+  bottom: 0;
+  right: 0;
+  padding: 6px;
+  background-color: #232323;
+  border-radius: 10px 0 0 0;
+  font-size: 0
+}
+
+iframe#fanatical-utilities {
+  z-index: 1000000;
+  background-color: #1c1c1c;
+}
+body#fanatical-utilities {
+  color: white;
+}
