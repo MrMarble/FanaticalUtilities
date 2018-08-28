@@ -20,7 +20,7 @@ span>img.card-icon {
 }
 
 iframe#fanatical-utilities {
-  z-index: 1000000;
+  z-index: 1000000 !important;
   background-color: #1c1c1c;
 }
 body#fanatical-utilities {
