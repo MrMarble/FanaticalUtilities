@@ -73,7 +73,6 @@
               });
             }
           }
-          console.log(res.responseText);
         }
       });
 
@@ -114,9 +113,13 @@
         }
       }
     });
-
     configButton();
-    showOwnedGames();
-    waitForKeyElements('div.bundle-accordion', displayCards);
+    if (!GM_config.get('api-key')) {
+      GM_config.open();
+    }
+    waitForKeyElements('div.bundle-accordion', function() {
+      showOwnedGames();
+      displayCards();
+    });
   });
 })();
