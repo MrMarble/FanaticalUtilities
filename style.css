@@ -2,6 +2,10 @@ div.has-cards {
   border-right: 3px solid gold
 }
 
+div.owned {
+  background-color: #213f21 !important;
+}
+
 span>img.card-icon {
   width: 26px !important;
   height: 16px;

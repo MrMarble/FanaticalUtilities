@@ -7,8 +7,10 @@
 // @match        https://www.fanatical.com/*/bundle/*
 // @updateURL    https://raw.githubusercontent.com/MrMarble/FanaticalUtilities/master/FanaticalUtilities.user.js
 // @downloadURL  https://raw.githubusercontent.com/MrMarble/FanaticalUtilities/master/FanaticalUtilities.user.js
+// @connect      http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
+// @grant        GM_xmlhttpRequest
 // @require      https://code.jquery.com/jquery-3.3.1.min.js
 // @require      https://raw.githubusercontent.com/MrMarble/FanaticalUtilities/master/waitForKeyElements.js
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
@@ -27,7 +29,7 @@
 
   function displayCards() {
     setTimeout(function() {
-      jQuery('[href*="steam-trading-cards"]').each((index, element) => {
+      jQuery('a[href*="steam-trading-cards"]').each((index, element) => {
         if (!jQuery(element).data('has-cards')) {
           jQuery(element).data('has-cards', true);
           jQuery(element)
@@ -42,24 +44,71 @@
     }, 250);
   }
 
+  function showOwnedGames() {
+    setTimeout(function() {
+      let games = [];
+      jQuery('.accordion-content a[href^="http://store.steampowered.com/app/"]').each((index, element) => {
+        let regex = /http:\/\/store.steampowered.com\/app\/(\d+)/
+        let match = regex.exec(jQuery(element).attr('href'));
+        if (match) {
+          games.push(match[1]);
+        }
+      });
+      GM_xmlhttpRequest({
+        method: "GET",
+        headers: {
+          "Accept": "application/json"
+        },
+        url: 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?format=json&key=' + GM_config.get('api-key') + '&input_json={"steamid":' + GM_config.get('steam-id') + ',"appids_filter":[' + games.join(', ') + ']}',
+        onload: function(res) {
+          let json = JSON.parse(res.responseText);
+          if (json.response.game_count > 0) {
+            for (let game of json.response.games) {
+              jQuery('a[href*="http://store.steampowered.com/app/' + game.appid + '"]').each((index, element) => {
+                jQuery(element)
+                  .parents(".p-3")
+                  .prev()
+                  .children()
+                  .addClass('owned');
+              });
+            }
+          }
+          console.log(res.responseText);
+        }
+      });
+
+    }, 250);
+  }
+
   jQuery(window).on('load', function() {
     GM_addStyle(GM_getResourceText('style'));
 
-    let configLink = document.createElement('a');
-    configLink.textContent = 'Get your API key';
-    configLink.href = 'https://steamcommunity.com/dev/apikey';
+    let apiLink = document.createElement('a');
+    apiLink.textContent = 'Get your API key';
+    apiLink.href = 'https://steamcommunity.com/dev/apikey';
+
+    let steamLink = document.createElement('a');
+    steamLink.textContent = 'Get your steam ID';
+    steamLink.href = 'http://www.steam64.com/';
 
     GM_config.init({
       'id': 'fanatical-utilities', // The id used for this instance of GM_config
       'title': 'Fanatical Utilities Settings', // Panel Title
       'fields': // Fields object
       {
-        'api-key': // This is the id of the field
-        {
+        'api-key': {
           'section': ['Steam API Key',
             'The script need this  key to get your games'
           ],
-          'label': configLink, // Appears next to field
+          'label': apiLink, // Appears next to field
+          'title': 'Needed for detecting your games',
+          'type': 'text', // Makes this setting a text field
+        },
+        'steam-id': {
+          'section': ['Steam ID',
+            'The script need your steam id to compare the games'
+          ],
+          'label': steamLink, // Appears next to field
           'title': 'Needed for detecting your games',
           'type': 'text', // Makes this setting a text field
         }
@@ -67,6 +116,7 @@
     });
 
     configButton();
+    showOwnedGames();
     waitForKeyElements('div.bundle-accordion', displayCards);
   });
 })();
