@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Fanatical Steam Cards
 // @namespace    https://github.com/MrMarble/FanaticalUtilities
-// @version      1
+// @version      1.0.1
 // @description  Show if a game contains steam trading cards
 // @author       MrMarble
 // @match        https://www.fanatical.com/*/bundle/*
