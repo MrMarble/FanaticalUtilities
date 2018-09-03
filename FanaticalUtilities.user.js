@@ -7,6 +7,7 @@
 // @match        https://www.fanatical.com/*/bundle/*
 // @updateURL    https://raw.githubusercontent.com/MrMarble/FanaticalUtilities/master/FanaticalUtilities.user.js
 // @downloadURL  https://raw.githubusercontent.com/MrMarble/FanaticalUtilities/master/FanaticalUtilities.user.js
+// @license      MIT
 // @connect      api.steampowered.com
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
